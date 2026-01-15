@@ -1,5 +1,5 @@
 
-# 🎮 Electronic Agile Game Dashboard
+# 🎮 Electronic Agile Workshop Game Dashboard
 
 ## Overview
 
