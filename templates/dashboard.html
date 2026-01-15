@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agile Game Dashboard</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <!-- Initial Players Setup Overlay -->
+    <div id="playersSetupOverlay" class="players-setup-overlay">
+        <div class="players-setup-content">
+            <div class="players-setup-title">Electronic Agile Game</div>
+            <div class="players-setup-label">Enter the Number of Players:</div>
+            
+            <!-- Touch Controls for Players -->
+            <div class="touch-controls">
+                <div class="touch-btn-group">
+                    <button type="button" class="touch-btn subtract" onclick="adjustPlayersSetup(-10)">-10</button>
+                    <button type="button" class="touch-btn subtract" onclick="adjustPlayersSetup(-5)">-5</button>
+                    <button type="button" class="touch-btn subtract" onclick="adjustPlayersSetup(-1)">-1</button>
+                </div>
+                
+                <div class="number-display" id="playersSetupDisplay">0</div>
+                
+                <div class="touch-btn-group">
+                    <button type="button" class="touch-btn add" onclick="adjustPlayersSetup(10)">+10</button>
+                    <button type="button" class="touch-btn add" onclick="adjustPlayersSetup(5)">+5</button>
+                    <button type="button" class="touch-btn add" onclick="adjustPlayersSetup(1)">+1</button>
+                </div>
+            </div>
+            
+            <!-- Hidden input for keyboard entry -->
+            <input type="number" id="playersSetupInput" class="hidden-input" placeholder="0" min="1" value="0">
+            
+            <button class="players-setup-submit" id="playersSetupSubmit" onclick="submitPlayersSetup()" disabled>
+                Start Game
+            </button>
+        </div>
+    </div>
+    
+    <!-- NEW: Mario Kart Countdown Overlay-->
+    <div id="countdownOverlay" class="countdown-overlay">
+        <div id="countdownDisplay" class="countdown-number">3</div>
+    </div>
+    
+    <div class="container">
+        <h1>Agile Game</h1>
+        
+        <!-- Counting Screen Button - Top Right -->
+        <div style="position: fixed; top: 20px; right: 20px; z-index: 100;">
+            <button class="btn" id="countingScreenBtn" onclick="showCountingOverlay()" style="display: none; background: linear-gradient(45deg, #667eea, #764ba2);">
+                Counting Screen
+            </button>
+        </div>
+        
+        <!-- Control Panel -->
+        <div class="control-panel">
+            <div class="timer-display" id="timerDisplay">
+                Ready to Start Iteration <span id="currentIterationDisplay">1</span>
+                <span class="status-indicator status-stopped" id="statusIndicator"></span>
+            </div>
+            
+            <div style="text-align: center;">
+                <button class="btn btn-warning" id="planningBtn" onclick="startPlanningTimer()">
+                    Start Planning Timer
+                </button>
+                <button class="btn" id="startBtn" onclick="startIteration()" disabled>
+                    Start 2-Minute Counting
+                </button>
+                <button class="btn" id="viewResultsBtn" onclick="showFinalResults()" disabled style="background: linear-gradient(45deg, #FF69B4, #FF1493);">
+                    View Results
+                </button>
+                <button class="btn btn-danger" onclick="resetSystem()">Reset System</button>
+            </div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressBar"></div>
+            </div>
+        </div>
+        
+        <!-- Main Results Table -->
+        <div class="main-table-container">
+            <div class="table-title">Results </div>
+            
+            <table class="main-table">
+                <thead>
+                    <tr>
+                        <th>Iteration</th>
+                        <th>Plan</th>
+                        <th>Actual</th>
+                        <th>Defects</th>
+                        <th>Total</th>
+                        <th>Delta</th>
+                        <th>Score</th>
+                    </tr>
+                </thead>
+                <tbody id="mainTableBody">
+                    <tr id="row-1">
+                        <td>1</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                    </tr>
+                    <tr id="row-2">
+                        <td>2</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                    </tr>
+                    <tr id="row-3">
+                        <td>3</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                    </tr>
+                    <tr id="row-4">
+                        <td>4</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                    </tr>
+                    <tr id="row-5">
+                        <td>5</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                        <td class="empty-cell">-</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <!-- Planning Timer Modal -->
+    <div id="planningModal" class="planning-modal">
+        <div class="planning-modal-content">
+            <h2 style="font-size: 2.0em; margin-bottom: 20px;">Planning Phase - Iteration <span id="planningIterationNum">1</span></h2>
+            <div class="planning-timer" id="planningTimer">2:00</div>
+            <div class="planning-progress">
+                <div class="planning-progress-fill" id="planningProgressBar"></div>
+            </div>
+            <div class="planning-input-group">
+                <label for="planningInput">Enter Your Plan:</label>
+               
+                <!-- Touch Controls -->
+                <div class="touch-controls">
+                    <div class="touch-btn-group">
+                        <button type="button" class="touch-btn subtract" onclick="adjustPlan(-10)">-10</button>
+                        <button type="button" class="touch-btn subtract" onclick="adjustPlan(-5)">-5</button>
+                        <button type="button" class="touch-btn subtract" onclick="adjustPlan(-1)">-1</button>
+                    </div>
+                    
+                    <div class="planning-number-display" id="planningDisplay">0</div>
+                    
+                    <div class="touch-btn-group">
+                        <button type="button" class="touch-btn add" onclick="adjustPlan(10)">+10</button>
+                        <button type="button" class="touch-btn add" onclick="adjustPlan(5)">+5</button>
+                        <button type="button" class="touch-btn add" onclick="adjustPlan(1)">+1</button>
+                    </div>
+                </div>                
+                
+                <!-- Hidden input for keyboard entry -->
+                <input type="number" id="planningInput" class="hidden-input" placeholder="0" min="1">
+            </div>
+            <button class="planning-submit-btn" onclick="submitPlan()">Submit Plan</button>
+        </div>
+    </div>
+    
+    <!-- Full Screen Counting Overlay -->
+    <div id="countingOverlay" class="counting-overlay">
+        <div class="overlay-controls">
+            <button class="full-dashboard-btn" onclick="hideCountingOverlay()">
+                Full Dashboard
+            </button>
+        </div>
+        <div class="overlay-header">
+            <div class="overlay-title">Agile Game - Ball Counting</div>
+            <div class="overlay-timer" id="overlayTimer">2:00</div>
+            <div class="overlay-progress">
+                <div class="overlay-progress-fill" id="overlayProgressBar"></div>
+            </div>
+        </div>
+        <div class="overlay-content">
+            <div class="ball-counter-display">
+                <div class="counter-label">Balls Counted</div>
+                <div class="counter-value" id="overlayBallCount">0</div>
+            </div>
+            <div class="iteration-info">
+                <div class="iteration-label">Current Iteration</div>
+                <div class="iteration-number" id="overlayIteration">1</div>
+                <div class="plan-display">
+                    Plan: <span id="overlayPlan">-</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Defects Input Modal -->
+    <div id="defectsModal" class="modal">
+        <div class="modal-content">
+            <h2>Game Complete!</h2>
+            <p>Iteration <span id="modalIteration">1</span> finished. How many defects were found in this batch?</p>
+            
+            <!-- Touch Controls -->
+            <div class="touch-controls">
+                <div class="touch-btn-group">
+                    <button type="button" class="touch-btn subtract" onclick="adjustDefects(-10)">-10</button>
+                    <button type="button" class="touch-btn subtract" onclick="adjustDefects(-5)">-5</button>
+                    <button type="button" class="touch-btn subtract" onclick="adjustDefects(-1)">-1</button>
+                </div>
+                
+                <div class="number-display" id="defectsDisplay">0</div>
+                
+                <div class="touch-btn-group">
+                    <button type="button" class="touch-btn add" onclick="adjustDefects(10)">+10</button>
+                    <button type="button" class="touch-btn add" onclick="adjustDefects(5)">+5</button>
+                    <button type="button" class="touch-btn add" onclick="adjustDefects(1)">+1</button>
+                </div>
+            </div>
+        
+            <!-- Hidden input for keyboard entry -->
+            <input type="number" id="defectsInput" class="hidden-input" placeholder="0" min="0" value="0">
+            
+            <button class="btn" onclick="submitDefects()">Submit & Continue</button>
+        </div>
+    </div>
+    
+    <!-- In-Progress Input Modal -->
+    <div id="inProgressModal" class="modal">
+        <div class="modal-content">
+            <h2>In-Progress Balls</h2>
+            <p>Iteration <span id="inProgressModalIteration">1</span>: How many balls are still in progress?</p>
+            
+            <!-- Touch Controls -->
+            <div class="touch-controls">
+                <div class="touch-btn-group">
+                    <button type="button" class="touch-btn subtract" onclick="adjustInProgress(-10)">-10</button>
+                    <button type="button" class="touch-btn subtract" onclick="adjustInProgress(-5)">-5</button>
+                    <button type="button" class="touch-btn subtract" onclick="adjustInProgress(-1)">-1</button>
+                </div>
+                
+                <div class="number-display" id="inProgressDisplay">0</div>
+                
+                <div class="touch-btn-group">
+                    <button type="button" class="touch-btn add" onclick="adjustInProgress(10)">+10</button>
+                    <button type="button" class="touch-btn add" onclick="adjustInProgress(5)">+5</button>
+                    <button type="button" class="touch-btn add" onclick="adjustInProgress(1)">+1</button>
+                </div>
+            </div>
+        
+            <!-- Hidden input for keyboard entry -->
+            <input type="number" id="inProgressInput" class="hidden-input" placeholder="0" min="0" value="0">
+            
+            <button class="btn" onclick="submitInProgress()">Submit & Continue</button>
+        </div>
+    </div>
+    
+    <!-- Final Results Chart Modal -->
+    <div id="finalResultsModal" class="modal">
+        <div class="modal-content modal-content-large">
+            <h2 id="resultsModalTitle">🎉 Game Complete - Final Results</h2> 
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-color legend-plan"></div>
+                    <span>Plan</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color legend-actual"></div>
+                    <span>Actual</span>
+                </div>
+            </div>
+            
+            <div class="chart-container">
+                <canvas id="resultsChart"></canvas>
+            </div>
+            
+            <div style="text-align: center; margin-top: 15px;">
+                <button class="btn" onclick="closeResultsModal()">Close Results</button>
+                <button class="btn btn-danger" onclick="resetSystem()">Start New Game</button>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Initialize variables from Flask template
+        let currentIteration = {{ current_iteration }};
+        let planNumber = {{ plan_number }};
+        let numberOfPlayers = {{ number_of_players }};
+        let iterationsData = {{ iterations_data|tojson }};
+    </script>
+    <script src="{{ url_for('static', filename='script.js') }}"></script>
+</body>
+</html>
