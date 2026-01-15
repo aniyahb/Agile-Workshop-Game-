@@ -14,7 +14,7 @@ The **Electronic Agile Game** is an interactive educational tool designed to tea
 
 For a complete demonstration of the system in action, watch the walkthrough video:
 
-**📹 [Watch the Electronic Agile Game Walkthrough](https://psu.mediaspace.kaltura.com/media/1_q34btkme)**
+**📹 [Watch the Electronic Agile Workshop Game Walkthrough](https://psu.mediaspace.kaltura.com/media/1_q34btkme)**
 
 ---
 ## 🎯 Purpose & Learning Objectives
