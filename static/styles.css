@@ -217,15 +217,14 @@ h1 {
     box-shadow: 0 20px 60px rgba(0,0,0,0.3);
     animation: modalSlideIn 0.3s ease;
     box-sizing: border-box;
-    /* ensure modal never exceeds viewport and becomes scrollable */
     max-height: calc(100vh - 80px);
     overflow-y: auto;
 }
-/* Reduce chart height inside the modal so footer/buttons remain visible on smaller screens */
+
 .modal-content-large .chart-container {
     height: 320px;
 }
-/* Responsive tweaks for narrow viewports */
+
 @media (max-width: 640px) {
     .modal-content-large {
         margin: 2% 10px;
@@ -496,7 +495,7 @@ h1 {
     overflow-y: auto;
     box-sizing: border-box;
 }
-/* Make the internal scrollbar subtle and match the modal */
+
 .planning-modal-content::-webkit-scrollbar {
     width: 8px;
     height: 8px;
@@ -510,7 +509,7 @@ h1 {
     border: 2px solid transparent;
     background-clip: padding-box;
 }
-/* Firefox scrollbar styling */
+
 .planning-modal-content {
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.12) transparent;
@@ -587,7 +586,7 @@ h1 {
     cursor: not-allowed;
     transform: none;
 }
-/* Touch-friendly increment/decrement controls */
+
 .touch-controls {
     display: flex;
     align-items: center;
@@ -652,7 +651,7 @@ h1 {
     text-align: center;
     box-shadow: 0 4px 10px rgba(0,0,0,0.2);
 }
-/* Hide the default input but keep it for keyboard input */
+
 .hidden-input {
     position: absolute;
     opacity: 0;
@@ -731,9 +730,9 @@ h1 {
     cursor: not-allowed;
     transform: none;
 }
-/* *** NEW: Mario Kart Countdown Overlay Styles *** */
+/* Mario Kart Countdown Overlay Styles */
 .countdown-overlay {
-    display: none;  /* *** FIXED: Removed duplicate display property *** */
+    display: none;  
     position: fixed;
     top: 0;
     left: 0;
@@ -741,7 +740,7 @@ h1 {
     height: 100vh;
     background: linear-gradient(135deg, rgba(0, 0, 0, 0.95), rgba(50, 50, 50, 0.95));
     backdrop-filter: blur(10px);
-    z-index: 20000;  /* *** UPDATED: Higher z-index *** */
+    z-index: 20000;  
 }
 .countdown-overlay.active {
     display: flex;
@@ -798,34 +797,30 @@ h1 {
         opacity: 1;
     }
 }
-/* =============================================================================
-   Last minute FINAL RESULTS MODAL - BALANCED SIZE FIXES
-   Better spacing - fits without scrolling but not too cramped
-   ============================================================================= */
-/* Make the modal use more vertical space */
+
 .modal-content-large {
     max-height: 96vh !important;
     margin: 2vh auto !important;
     padding: 18px 25px 18px 25px !important;
 }
-/* Slightly reduce title size */
+
 #resultsModalTitle {
     font-size: 1.5em !important;
     margin-bottom: 10px !important;
 }
-/* Adjust legend size */
+
 .chart-legend {
     margin: 8px 0 10px 0 !important;
 }
 .legend-item {
     font-size: 0.9em !important;
 }
-/* Make chart a bit smaller but not too much */
+
 .modal-content-large .chart-container {
     height: 260px !important;
     margin: 10px 0 !important;
 }
-/* Adjust summary section spacing */
+
 .results-summary {
     gap: 15px !important;
     margin: 12px 0 15px 0 !important;
@@ -839,11 +834,11 @@ h1 {
     margin: 3px 0 !important;
     line-height: 1.4 !important;
 }
-/* Adjust button spacing at bottom */
+
 .modal-content-large > div:last-child {
     margin-top: 12px !important;
 }
-/* Center ONLY the final results modal vertically */
+
 #finalResultsModal.modal {
     display: none !important;
 }
